@@ -52,6 +52,8 @@ public class OrdersController : Controller
     [HttpPost]
     public async Task<ActionResult<int>> PlaceOrder(Order order)
     {
+        await Task.Delay(2000); // Wait 5 seconds
+
         order.CreatedTime = DateTime.Now;
         order.DeliveryLocation = new LatLong(51.5001, -0.1239);
         // order.UserId = PizzaApiExtensions.GetUserId(HttpContext);
