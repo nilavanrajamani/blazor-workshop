@@ -6,46 +6,40 @@
 <PageTitle>Blazing Pizza - My Orders</PageTitle>
 
 <div class="main">
-    @if (ordersWithStatus is null)
-    {
-        <text>Loading...</text>
-    }
-    else if (!ordersWithStatus.Any())
-    {
+    <TemplatedList Loader="LoadOrders" ListGroupClass="orders-list">
+        <Loading>Loading...</Loading>
+        <Empty>
             <h2>No orders placed</h2>
             <a class="btn btn-success" href="">Order some Pizza</a>
-    }
-    else
-    {
-            <div class="list-group orders-list">
-            @foreach (var item in ordersWithStatus)
-            {
-                        <div class="list-group-item">
-                            <div class="col">
-                                <h5>@item.Order.CreatedTime.ToLongDateString()</h5>
-                                Items:
-                                <strong>@item.Order.Pizzas.Count()</strong>;
-                                Total Price:
-                                <strong>£@item.Order.GetFormattedTotalPrice()</strong>
-                            </div>
-                            <div class="col">
-                                Status: <strong>@item.StatusText</strong>
-                            </div>
-                            <div class="col flex-grow-0">
-                                <a href="myorders/@item.Order.OrderId" class="btn btn-success">
-                                    Track &gt;
-                                </a>
-                            </div>
-                        </div>
-            }
+        </Empty>
+        <Item Context="item">
+            <div class="list-group-item">
+                <div class="col">
+                    <h5>@item.Order.CreatedTime.ToLongDateString()</h5>
+                    Items:
+                    <strong>@item.Order.Pizzas.Count()</strong>;
+                    Total Price:
+                    <strong>£@item.Order.GetFormattedTotalPrice()</strong>
+                </div>
+                <div class="col">
+                    Status: <strong>@item.StatusText</strong>
+                </div>
+                <div class="col flex-grow-0">
+                    <a href="myorders/@item.Order.OrderId" class="btn btn-success">
+                        Track &gt;
+                    </a>
+                </div>
             </div>
-    }
+        </Item>
+    </TemplatedList>
 </div>
 
 @code {
     IEnumerable<OrderWithStatus>? ordersWithStatus;
-    protected override async Task OnParametersSetAsync()
+    async Task<IEnumerable<OrderWithStatus>> LoadOrders()
     {
+        await Task.Delay(2000);
+        var ordersWithStatus = Enumerable.Empty<OrderWithStatus>();
         try
         {
             ordersWithStatus = await OrdersClient.GetOrders();
@@ -54,6 +48,7 @@
         {
             ex.Redirect();
         }
+        return ordersWithStatus;
     }
 
 }

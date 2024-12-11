@@ -46,10 +46,11 @@
     </div>
 </div>
 
-@if (OrderState.ShowingConfigureDialog)
-{
+
+<TemplatedDialog Show="OrderState.ShowingConfigureDialog">
     <ConfigurePizzaDialog Pizza="OrderState.ConfiguringPizza" OnConfirm="OrderState.ConfirmConfigurePizzaDialog" OnCancel="OrderState.CancelConfigurePizzaDialog"></ConfigurePizzaDialog>
-}
+</TemplatedDialog>
+
 
 @code {
     private List<PizzaSpecial>? specials;
