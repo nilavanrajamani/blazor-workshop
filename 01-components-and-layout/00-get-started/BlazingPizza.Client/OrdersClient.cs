@@ -16,6 +16,12 @@ namespace BlazingPizza.Client
             return await httpClient.GetFromJsonAsync("orders", OrderContext.Default.ListOrderWithStatus) ?? new();
         }
 
+        public async Task SubscribeToNotifications(NotificationSubscription subscription)
+        {
+            var response = await httpClient.PutAsJsonAsync("notifications/subscribe", subscription);
+            response.EnsureSuccessStatusCode();
+        }
+
         public async Task<OrderWithStatus> GetOrder(int orderId) =>
          await httpClient.GetFromJsonAsync($"orders/{orderId}", OrderContext.Default.OrderWithStatus) ?? new();
 

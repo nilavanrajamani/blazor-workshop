@@ -3,6 +3,7 @@
 @inject NavigationManager NavigationManager
 @inject OrderState OrderState
 @inject OrdersClient OrdersClient
+@inject IJSRuntime JSRuntime
 @attribute [Authorize]
 
 <PageTitle>Blazing Pizza - Checkout</PageTitle>
@@ -28,6 +29,28 @@
 
 @code {
     bool isSubmitting = false;
+    protected override void OnInitialized()
+    {
+        _ = RequestNotificationSubscriptionAsync();
+    }
+
+    async Task RequestNotificationSubscriptionAsync()
+    {
+        var subscription = await JSRuntime.InvokeAsync<NotificationSubscription>("blazorPushNotifications.requestSubscription");
+        if (subscription is not null)
+        {
+            try
+            {
+                await OrdersClient.SubscribeToNotifications(subscription);
+            }
+            catch (AccessTokenNotAvailableException ex)
+            {
+                ex.Redirect();
+            }
+        }
+
+    }
+
     async Task PlaceOrder()
     {
         isSubmitting = true;
